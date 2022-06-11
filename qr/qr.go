@@ -1,13 +1,25 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"strings"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
-	data string
+	textInput textinput.Model
+}
+
+func newModel() model {
+	ti := textinput.New()
+	ti.Focus()
+
+	return model{
+		textInput: ti,
+	}
 }
 
 func (model) Init() tea.Cmd {
@@ -20,19 +32,38 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "ctrl+d":
+			if m.textInput.Value() == "" {
+				return m, tea.Quit
+			}
 		}
 	}
-	return m, nil
+
+	var cmd tea.Cmd
+	m.textInput, cmd = m.textInput.Update(msg)
+
+	return m, cmd
 }
 
 func (m model) View() string {
-	return "Bubble, bubble..."
+	var out strings.Builder
+
+	fmt.Fprintln(&out, m.textInput.View())
+
+	qr, err := renderQR(m.textInput.Value())
+	if err != nil {
+		fmt.Fprintln(&out, err.Error())
+	} else {
+		fmt.Fprintln(&out, qr)
+	}
+
+	return out.String()
 }
 
 var _ tea.Model = (*model)(nil)
 
 func main() {
-	m := model{}
+	m := newModel()
 	prog := tea.NewProgram(m)
 	if err := prog.Start(); err != nil {
 		log.Fatal(err)
