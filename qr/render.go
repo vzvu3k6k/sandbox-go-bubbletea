@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"strings"
 
@@ -25,12 +24,12 @@ func renderQR(data string) (string, error) {
 	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
 		for x := bounds.Min.X; x < bounds.Max.X; x++ {
 			if q.At(x, y) == color.Black {
-				fmt.Fprint(&out, black)
+				out.WriteString(black)
 			} else {
-				fmt.Fprint(&out, white)
+				out.WriteString(white)
 			}
 		}
-		fmt.Fprintln(&out)
+		out.WriteRune('\n')
 	}
 
 	return out.String(), nil
