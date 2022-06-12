@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -53,7 +52,6 @@ func (m model) View() string {
 	qr, err := renderQR(m.textInput.Value())
 	if err != nil {
 		out.WriteString(err.Error())
-		fmt.Fprintln(&out)
 	} else {
 		out.WriteString(qr)
 	}
