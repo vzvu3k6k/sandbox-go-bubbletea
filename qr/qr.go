@@ -48,13 +48,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	var out strings.Builder
 
-	fmt.Fprintln(&out, m.textInput.View())
+	out.WriteString(m.textInput.View() + "\n")
 
 	qr, err := renderQR(m.textInput.Value())
 	if err != nil {
-		fmt.Fprintln(&out, err.Error())
+		out.WriteString(err.Error())
+		fmt.Fprintln(&out)
 	} else {
-		fmt.Fprintln(&out, qr)
+		out.WriteString(qr)
 	}
 
 	return out.String()
